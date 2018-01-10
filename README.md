@@ -18,6 +18,7 @@ Instalación de dependencias:
 
     + https://bottlepy.org/docs/dev/
     + http://python-driver-for-arangodb.readthedocs.io/en/master/
+    + http://python-driver-for-arangodb.readthedocs.io/en/master/document.html?highlight=update
 
 Thanks/Credits
 

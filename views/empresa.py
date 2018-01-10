@@ -69,8 +69,10 @@ def guardar():
           'modifiacion': modificacion, 
         })
     if len(eliminados) != 0:
-      for id in eliminados:
-        x = 2
+      for _key in eliminados:
+        txn.collection('empresas').delete({
+          '_key': _key,  
+        })
     rpta = {'tipo_mensaje' : 'success', 'mensaje' : ['Se ha registrado los cambios en las empresas', array_nuevos]}
     txn.commit()
   except Exception as e:
