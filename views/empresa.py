@@ -38,17 +38,41 @@ def guardar():
         distrito_id = nuevo['distrito_id']
         creacion = datetime.now().__str__()
         modificacion = None
-        _id = db.collection('empresas').insert({'razon_social': razon_social, 'ruc': ruc, 'nombre_comercial': nombre_comercial, 'domicilio_fiscal': domicilio_fiscal, 'distrito_id': distrito_id, 'modifiacion': None, 'creacion': creacion})
-        temp = {'temporal' : temp_id, 'nuevo_id' : _id['_key']}
+        _id = db.collection('empresas').insert({
+          'razon_social': razon_social, 
+          'ruc': ruc, 
+          'nombre_comercial': nombre_comercial, 
+          'domicilio_fiscal': domicilio_fiscal, 
+          'distrito_id': distrito_id, 
+          'modifiacion': None, 
+          'creacion': creacion
+        })
+        temp = {'temporal': temp_id, 'nuevo_id': _id['_key']}
         array_nuevos.append(temp)
+    txn = db.transaction(write = 'empresas')
     if len(editados) != 0:
       for editado in editados:
-        #session.query(Sensor).filter_by(id = editado['id']).update(editado)
-        x = 1
+        _key = editado['_id']
+        razon_social = editado['razon_social']
+        ruc = editado['ruc']
+        nombre_comercial = editado['nombre_comercial']
+        domicilio_fiscal = editado['domicilio_fiscal']
+        distrito_id = editado['distrito_id']
+        modificacion = datetime.now().__str__()
+        txn.collection('empresas').update({
+          '_key': _key, 
+          'razon_social': razon_social, 
+          'ruc': ruc, 
+          'nombre_comercial': nombre_comercial, 
+          'domicilio_fiscal': domicilio_fiscal, 
+          'distrito_id': distrito_id, 
+          'modifiacion': modificacion, 
+        })
     if len(eliminados) != 0:
       for id in eliminados:
         x = 2
     rpta = {'tipo_mensaje' : 'success', 'mensaje' : ['Se ha registrado los cambios en las empresas', array_nuevos]}
+    txn.commit()
   except Exception as e:
     #session.rollback()
     rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en guardar las empesas', str(e)]}
