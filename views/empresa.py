@@ -3,6 +3,7 @@
 import json
 from bottle import Bottle, request
 from pprint import pprint
+from datetime import datetime
 from config.database import db
 
 empresa_view = Bottle()
@@ -18,7 +19,42 @@ def listar():
       print('KeyError en ArangoDBJSON, la llave que busca ' + str(e) + ' no existe')
   return json.dumps(rpta)
 
-@empresa_view.route('/guardar', method='GET')
+@empresa_view.route('/guardar', method='POST')
+def guardar():
+  data = json.loads(request.query.data)
+  nuevos = data['nuevos']
+  editados = data['editados']
+  eliminados = data['eliminados']
+  array_nuevos = []
+  rpta = None
+  try:
+    if len(nuevos) != 0:
+      for nuevo in nuevos:
+        temp_id = nuevo['_id']
+        razon_social = nuevo['razon_social']
+        ruc = nuevo['ruc']
+        nombre_comercial = nuevo['nombre_comercial']
+        domicilio_fiscal = nuevo['domicilio_fiscal']
+        distrito_id = nuevo['distrito_id']
+        creacion = datetime.now().__str__()
+        modificacion = None
+        _id = db.collection('empresas').insert({'razon_social': razon_social, 'ruc': ruc, 'nombre_comercial': nombre_comercial, 'domicilio_fiscal': domicilio_fiscal, 'distrito_id': distrito_id, 'modifiacion': None, 'creacion': creacion})
+        temp = {'temporal' : temp_id, 'nuevo_id' : _id['_key']}
+        array_nuevos.append(temp)
+    if len(editados) != 0:
+      for editado in editados:
+        #session.query(Sensor).filter_by(id = editado['id']).update(editado)
+        x = 1
+    if len(eliminados) != 0:
+      for id in eliminados:
+        x = 2
+    rpta = {'tipo_mensaje' : 'success', 'mensaje' : ['Se ha registrado los cambios en las empresas', array_nuevos]}
+  except Exception as e:
+    #session.rollback()
+    rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en guardar las empesas', str(e)]}
+  return json.dumps(rpta)
+
+@empresa_view.route('/guardarsh', method='POST')
 def guardar():
   txn = db.transaction(write='empresas')
   txn.collection('empresas').insert({'razon_social': 'Jake'})
