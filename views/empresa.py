@@ -76,22 +76,13 @@ def guardar():
     rpta = {'tipo_mensaje' : 'success', 'mensaje' : ['Se ha registrado los cambios en las empresas', array_nuevos]}
     txn.commit()
   except Exception as e:
-    #session.rollback()
+    if len(array_nuevos) != 0:
+      txn = db.transaction(write = 'empresas')
+      for temp in array_nuevos:
+        _key = temp['nuevo_id']
+        txn.collection('empresas').delete({
+          '_key': _key,  
+        })
+      txn.commit()
     rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en guardar las empesas', str(e)]}
   return json.dumps(rpta)
-
-@empresa_view.route('/guardarsh', method='POST')
-def guardar():
-  txn = db.transaction(write='empresas')
-  txn.collection('empresas').insert({'razon_social': 'Jake'})
-  print("1+++++++++++++++++++++++++")
-  pprint(vars(txn))
-  txn.collection('empresas').insert({'razon_social': 'Jill'})
-  print("2+++++++++++++++++++++++++")
-  pprint(vars(txn._id))
-  txn.commit()
-  print("3+++++++++++++++++++++++++")
-  pprint(vars(txn))
-  print("4+++++++++++++++++++++++++")
-  pprint(vars(txn._id))
-  return 'rpta'
