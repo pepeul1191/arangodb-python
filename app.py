@@ -25,5 +25,5 @@ def send_static(filename):
 
 if __name__ == '__main__':
   app.mount('/empresa', empresa_view)
-  #app.run(host='localhost', port=3021, debug=True, reloader=True)
-  app.run(host='localhost', port=3021, debug=True)
+  app.run(host='localhost', port=3021, debug=True, reloader=True)
+  #app.run(host='localhost', port=3021, debug=True)
