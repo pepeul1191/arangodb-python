@@ -30,43 +30,29 @@ def guardar():
   try:
     if len(nuevos) != 0:
       for nuevo in nuevos:
-        temp_id = nuevo['_id']
-        razon_social = nuevo['razon_social']
-        ruc = nuevo['ruc']
-        nombre_comercial = nuevo['nombre_comercial']
-        domicilio_fiscal = nuevo['domicilio_fiscal']
-        distrito_id = nuevo['distrito_id']
-        creacion = datetime.now().__str__()
-        modificacion = None
         _id = db.collection('empresas').insert({
-          'razon_social': razon_social, 
-          'ruc': ruc, 
-          'nombre_comercial': nombre_comercial, 
-          'domicilio_fiscal': domicilio_fiscal, 
-          'distrito_id': distrito_id, 
+          'razon_social': nuevo['razon_social'], 
+          'ruc': nuevo['ruc'], 
+          'nombre_comercial': nuevo['nombre_comercial'], 
+          'domicilio_fiscal': nuevo['domicilio_fiscal'], 
+          'distrito_id': nuevo['distrito_id'], 
           'modifiacion': None, 
-          'creacion': creacion
+          'creacion': datetime.now().__str__()
         })
+        temp_id = nuevo['_id']
         temp = {'temporal': temp_id, 'nuevo_id': _id['_key']}
         array_nuevos.append(temp)
     txn = db.transaction(write = 'empresas')
     if len(editados) != 0:
       for editado in editados:
-        _key = editado['_id']
-        razon_social = editado['razon_social']
-        ruc = editado['ruc']
-        nombre_comercial = editado['nombre_comercial']
-        domicilio_fiscal = editado['domicilio_fiscal']
-        distrito_id = editado['distrito_id']
-        modificacion = datetime.now().__str__()
         txn.collection('empresas').update({
-          '_key': _key, 
-          'razon_social': razon_social, 
-          'ruc': ruc, 
-          'nombre_comercial': nombre_comercial, 
-          'domicilio_fiscal': domicilio_fiscal, 
-          'distrito_id': distrito_id, 
-          'modifiacion': modificacion, 
+          '_key': editado['_id'], 
+          'razon_social': editado['razon_social'], 
+          'ruc': editado['ruc'], 
+          'nombre_comercial': editado['nombre_comercial'], 
+          'domicilio_fiscal': editado['domicilio_fiscal'], 
+          'distrito_id': editado['distrito_id'], 
+          'modifiacion': datetime.now().__str__(), 
         })
     if len(eliminados) != 0:
       for _key in eliminados:
