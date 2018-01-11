@@ -82,5 +82,44 @@ def guardar():
           '_key': _key,  
         })
       txn.commit()
-    rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en guardar los empesas', str(e)]}
+    rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en la asociación/deasociación de los productos al local', str(e)]}
+  return json.dumps(rpta)
+
+@local_view.route('/asociar_producto', method='POST')
+def asociar_producto():
+  data = json.loads(request.query.data)
+  nuevos = data['nuevos']
+  editados = data['editados']
+  eliminados = data['eliminados']
+  local_id = data['extra']['local_id']
+  array_nuevos = []
+  rpta = None
+  try:
+    if len(nuevos) != 0:
+      for nuevo in nuevos:
+        _id = db.collection('locales_productos').insert({
+          'local': local_id, 
+          'producto': nuevo['_id'],
+        })
+        temp_id = nuevo['_id']
+        temp = {'temporal': temp_id, 'nuevo_id': _id['_key']}
+        array_nuevos.append(temp)
+    txn = db.transaction(write = 'locales_productos')
+    if len(eliminados) != 0:
+      for _key in eliminados:
+        txn.collection('locales_productos').delete({
+          '_key': _key,  
+        })
+    rpta = {'tipo_mensaje' : 'success', 'mensaje' : ['Se ha registrado la asociación/deasociación de los productos al local', array_nuevos]}
+    txn.commit()
+  except Exception as e:
+    if len(array_nuevos) != 0:
+      txn = db.transaction(write = 'locales')
+      for temp in array_nuevos:
+        _key = temp['nuevo_id']
+        txn.collection('locales').delete({
+          '_key': _key,  
+        })
+      txn.commit()
+    rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en la asociación/deasociación de los productos al local', str(e)]}
   return json.dumps(rpta)

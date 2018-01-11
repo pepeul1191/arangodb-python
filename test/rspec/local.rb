@@ -194,7 +194,83 @@ def eliminar
   end
 end
 
+def asociar_producto
+  RSpec.describe App do
+    describe "4. Crear asocaiciones con productos: " do
+      it '4.1 Conexión con backend' do
+        url = 'test/conexion'
+        test = App.new(url)
+        test.get()
+        expect(test.response.code).to eq(200)
+      end
+      it '4.2 Crear asociaciones' do
+        data = {
+          :nuevos => [
+            {
+              :_id => 'producto1',
+            },
+            {
+              :_id => 'producto2',
+            },
+            {
+              :_id => 'producto3',
+            },
+            {
+              :_id => 'producto4',
+            }  
+          ],
+          :editados => [],  
+          :eliminados => [],
+          :extra => {
+            :local_id => 'local_XD'
+          }
+        }.to_json
+        url = 'local/asociar_producto?data=' + data
+        test = App.new(url)
+        test.post()
+        expect(test.response.code).to eq(200)
+        expect(test.response.body).not_to include('error')
+        expect(test.response.body).to include('Se ha registrado')
+        expect(test.response.body).to include('nuevo_id')
+        expect(test.response.body).to include('success')
+      end
+    end
+  end
+end
+
+def desasociar_producto
+  RSpec.describe App do
+    describe "5. Eliminar asociacones con productos: " do
+      it '5.1 Conexión con backend' do
+        url = 'test/conexion'
+        test = App.new(url)
+        test.get()
+        expect(test.response.code).to eq(200)
+      end
+      it '5.2 Eliminar asociaciones' do
+        data = {
+          :nuevos => [],
+          :editados => [],  
+          :eliminados => ['262333','262337','262340','262343'],
+          :extra => {
+            :local_id => 'empresa123'
+          }
+        }.to_json
+        url = 'local/asociar_producto?data=' + data
+        test = App.new(url)
+        test.post()
+        expect(test.response.code).to eq(200)
+        expect(test.response.body).not_to include('error')
+        expect(test.response.body).to include('Se ha registrado')
+        expect(test.response.body).to include('success')
+      end
+    end
+  end
+end
+
 #listar
 #crear
 #editar
 #eliminar
+asociar_producto
+desasociar_producto
