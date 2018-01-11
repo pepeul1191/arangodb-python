@@ -14,7 +14,7 @@ def listar():
   empresas = db.collection('empresas')
   for empresa in empresas:
     try:
-      rpta.append({'_id': empresa['_key'], 'razon_social': empresa['razon_social'], 'ruc': empresa['ruc'], 'direccion': empresa['direccion']})
+      rpta.append({'_id': empresa['_key'], 'razon_social': empresa['razon_social'], 'ruc': empresa['ruc'], 'domicilio_fiscal': empresa['domicilio_fiscal']})
     except KeyError as e:
       print('KeyError en ArangoDBJSON, la llave que busca ' + str(e) + ' no existe')
   return json.dumps(rpta)
