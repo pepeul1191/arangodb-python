@@ -70,5 +70,5 @@ def guardar():
           '_key': _key,  
         })
       txn.commit()
-    rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en guardar las empesas', str(e)]}
+    rpta = {'tipo_mensaje' : 'error', 'mensaje' : ['Se ha producido un error en guardar las empresas', str(e)]}
   return json.dumps(rpta)

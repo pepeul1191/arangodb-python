@@ -3,6 +3,7 @@
 from bottle import Bottle, run, HTTPResponse, static_file, hook
 from views.empresa import empresa_view
 from views.local import local_view
+from views.producto import producto_view
 
 app = Bottle()
 
@@ -27,5 +28,6 @@ def send_static(filename):
 if __name__ == '__main__':
 	app.mount('/empresa', empresa_view)
 	app.mount('/local', local_view)
+	app.mount('/producto', producto_view)
 	app.run(host='localhost', port=3021, debug=True, reloader=True)
 	#app.run(host='localhost', port=3021, debug=True)
