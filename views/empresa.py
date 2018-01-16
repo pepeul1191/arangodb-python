@@ -19,6 +19,24 @@ def listar():
       print('KeyError en ArangoDBJSON, la llave que busca ' + str(e) + ' no existe')
   return json.dumps(rpta)
 
+@empresa_view.route('/obtener/<empresa_id>', method='GET')
+def obtener(empresa_id):
+  rpta = None
+  empresas = db.collection('empresas').find({'_key': empresa_id})
+  for empresa in empresas:
+    try:
+      rpta = {
+        '_id': empresa['_key'], 
+        'domicilio_fiscal': empresa['domicilio_fiscal'], 
+        'nombre_comercial': empresa['nombre_comercial'], 
+        'razon_social': empresa['razon_social'], 
+        'distrito_id': empresa['distrito_id'], 
+        'ruc': empresa['ruc'], 
+      }
+    except KeyError as e:
+      print('KeyError obtener la empresa que busca en ArangoDB, la llave que busca ' + str(e) + ' no existe')
+  return json.dumps(rpta)
+
 @empresa_view.route('/guardar', method='POST')
 def guardar():
   data = json.loads(request.query.data)
